@@ -1526,6 +1526,18 @@
    .hist-stats {
      grid-template-columns: 1fr 1fr;
    }
+
+   .reward-chips {
+     grid-template-columns: 1fr;
+   }
+
+   .rotary-filter {
+     padding: 20px;
+   }
+   
+   .rotary-container {
+     transform: scale(0.9);
+   }
  }
 
  @media (max-width: 420px) {
