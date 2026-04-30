@@ -45,7 +45,9 @@
     body {
       width: 100%;
       height: 100%;
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: auto;
+      scroll-behavior: smooth;
       font-family: var(--font-body);
       background: var(--surface);
       color: var(--text)
@@ -273,28 +275,18 @@
 
     /* PAGES */
     .page {
-      position: fixed;
-      inset: 0;
+      position: relative;
       z-index: 1;
       display: flex;
       flex-direction: column;
-      overflow: hidden;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .4s ease, transform .4s ease;
-      transform: translateY(20px)
-    }
-
-    .page.active {
-      opacity: 1;
-      pointer-events: all;
-      transform: translateY(0)
+      min-height: 100vh;
+      width: 100%;
     }
 
     .page-inner {
       flex: 1;
-      overflow: hidden;
       padding-top: 70px;
+      padding-bottom: 70px;
       display: flex;
       flex-direction: column
     }
@@ -449,7 +441,7 @@
     }
 
     .btn-primary:hover {
-      box-shadow: 0 0 15px rgba(255, 255, 255, 0.2), inset 2px 2px 5px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.2), inset 2px 2px 5px rgba(0,0,0,0.2);
       transform: translateY(-2px);
     }
 
@@ -1543,6 +1535,22 @@
         padding: 14px 20px
       }
 
+      .nav-auth-btn, .nav-cta {
+        display: none !important;
+      }
+
+      .mobile-only {
+        display: block !important;
+      }
+
+      .hero-title {
+        font-size: clamp(28px, 8vw, 36px);
+      }
+
+      .orb.home-orb3 {
+        display: none;
+      }
+
       .hamburger {
         display: flex
       }
@@ -1674,6 +1682,8 @@
       <div class="nav-link" data-page="boost" onclick="goPage('boost');closeMenu()">Priority Boost</div>
       <div class="nav-link" data-page="features" onclick="goPage('features');closeMenu()">Features & Map</div>
       <div class="nav-link" data-page="roles" onclick="goPage('roles');closeMenu()">Join</div>
+      <a href="login.html" class="nav-link mobile-only" style="display:none; text-decoration:none;">Login / Signup</a>
+      <a href="dashboard.html" class="nav-link mobile-only" style="display:none; text-decoration:none; color:var(--primary);">Open App →</a>
     </div>
     <div class="nav-right">
       <a href="login.html" class="nav-auth-btn" id="navAuthBtn">Login / Signup</a>
@@ -2057,8 +2067,7 @@
           </div>
           <div class="gate-legend">
             <div class="gate-item">
-              <div class="gate-dot" style="background:#38b2ac;box-shadow:0 0 6px rgba(56, 178, 172,.5)"></div>
-              <strong>Gate
+              <div class="gate-dot" style="background:#38b2ac;box-shadow:0 0 6px rgba(56, 178, 172,.5)"></div><strong>Gate
                 1</strong><span>West entry — near H1 block</span>
             </div>
             <div class="gate-item">
@@ -2142,15 +2151,43 @@
     const pages = ['home', 'how', 'boost', 'features', 'roles'];
     function goPage(id) {
       pages.forEach(p => {
-        document.getElementById('page-' + p).classList.remove('active');
         const link = document.querySelector(`.nav-link[data-page="${p}"]`);
         if (link) link.classList.remove('active');
       });
-      document.getElementById('page-' + id).classList.add('active');
       const link = document.querySelector(`.nav-link[data-page="${id}"]`);
       if (link) link.classList.add('active');
+      
+      const target = document.getElementById('page-' + id);
+      if (target && id !== 'home') {
+        const top = target.getBoundingClientRect().top + window.scrollY - 62;
+        window.scrollTo({ top, behavior: 'smooth' });
+      } else if (id === 'home') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     }
-    goPage('home');
+    
+    // Set initial active link
+    document.querySelector('.nav-link[data-page="home"]').classList.add('active');
+
+    // Update active link on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id.replace('page-', '');
+          pages.forEach(p => {
+            const link = document.querySelector(`.nav-link[data-page="${p}"]`);
+            if (link) link.classList.remove('active');
+          });
+          const activeLink = document.querySelector(`.nav-link[data-page="${id}"]`);
+          if (activeLink) activeLink.classList.add('active');
+        }
+      });
+    }, { threshold: 0.3, rootMargin: "-62px 0px 0px 0px" });
+
+    pages.forEach(p => {
+      const el = document.getElementById('page-' + p);
+      if (el) observer.observe(el);
+    });
 
     // ── NAV HAMBURGER ──
     function toggleMenu() {
