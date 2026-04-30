@@ -5,12 +5,12 @@
     --accent2: #d4a052;
     --surface: #1e2229;
     --surface2: #272d36;
-    --surface3: #2a3039;
+    --surface3: #323a45;
     --glass: rgba(255, 255, 255, 0.04);
     --glass-border: rgba(255, 255, 255, 0.08);
     --text: #e8ecf1;
-    --text-muted: #6b7a8d;
-    --text-dim: #4a5563;
+    --text-muted: #8d9eb5;
+    --text-dim: #6b7d94;
     --success: #38b2ac;
     --warning: #d4a052;
     --danger: #d4a052;
@@ -740,7 +740,7 @@ body::before {
     }
 
     .right-panel {
-        padding: 24px 20px;
+        padding: 80px 20px 24px; /* increased top padding to clear back button */
         height: 100vh;
         overflow-y: auto;
     }
@@ -756,9 +756,9 @@ body::before {
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
     .right-panel {
-        padding: 20px 12px;
+        padding: 70px 12px 20px;
     }
 
     .auth-card {
@@ -771,5 +771,20 @@ body::before {
 
     .card-body {
         padding: 20px 20px 28px;
+    }
+
+    .tab-row {
+        flex-direction: column;
+        margin: 20px 20px 0;
+        background: transparent;
+        border: none;
+        padding: 0;
+        gap: 6px;
+    }
+
+    .tab-btn {
+        background: rgba(255, 255, 255, .03);
+        border: 1px solid var(--glass-border);
+        border-radius: 10px;
     }
 }
