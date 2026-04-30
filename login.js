@@ -59,6 +59,13 @@ async function handleSignup(e) {
         showMsg('✓ OTP sent to email', 'success');
         document.getElementById('otpEmail').value = email;
 
+        // Auto-switch to OTP tab
+        setTimeout(() => {
+            if (typeof switchTab === 'function') {
+                switchTab('otp', document.querySelector('[data-tab=otp]'));
+            }
+        }, 800);
+
     } catch (err) {
         showMsg(err.message, 'error');
     } finally {
@@ -84,6 +91,14 @@ async function handleVerifyOtp(e) {
         if (!res.ok) throw new Error(data);
 
         showMsg('✓ Verified! Now login', 'success');
+
+        // Auto-switch to Login tab
+        setTimeout(() => {
+            if (typeof switchTab === 'function') {
+                switchTab('login', document.querySelector('[data-tab=login]'));
+                document.getElementById('loginEmail').value = email;
+            }
+        }, 800);
 
     } catch (err) {
         showMsg(err.message, 'error');
@@ -113,18 +128,9 @@ async function handleLogin(e) {
             body: JSON.stringify({ email, password })
         });
 
-        let data;
+        const data = await res.json();
 
-        try {
-            data = await res.json();
-        } catch {
-            data = await res.text();
-        }
-
-        if (!res.ok) {
-            console.log("LOGIN ERROR RESPONSE:", data); // 👈 VERY IMPORTANT
-            throw new Error(data.message || data || "Login failed");
-        }
+        if (!res.ok) throw new Error(data);
 
         // 🔥 STORE TOKEN
         localStorage.setItem("token", data.token);
