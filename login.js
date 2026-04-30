@@ -113,9 +113,18 @@ async function handleLogin(e) {
             body: JSON.stringify({ email, password })
         });
 
-        const data = await res.json();
+        let data;
 
-        if (!res.ok) throw new Error(data);
+        try {
+            data = await res.json();
+        } catch {
+            data = await res.text();
+        }
+
+        if (!res.ok) {
+            console.log("LOGIN ERROR RESPONSE:", data); // 👈 VERY IMPORTANT
+            throw new Error(data.message || data || "Login failed");
+        }
 
         // 🔥 STORE TOKEN
         localStorage.setItem("token", data.token);
