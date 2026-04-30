@@ -6,9 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Helpify — Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
-    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Plus+Jakarta+Sans:wght@700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="./css/dashboard.css">
 </head>
 
@@ -258,11 +256,26 @@
             <div class="section-action" onclick="loadOrders()">↻ Refresh</div>
           </div>
 
-          <div class="filter-row">
-            <button class="fpill active" onclick="filterFeed(this,'all')">All Gates</button>
-            <button class="fpill" onclick="filterFeed(this,'Gate 1')">Gate 1</button>
-            <button class="fpill" onclick="filterFeed(this,'Gate 2')">Gate 2</button>
-            <button class="fpill" onclick="filterFeed(this,'Gate 3')">Gate 3</button>
+          <div class="filter-row rotary-filter">
+            <div class="rotary-container">
+              <div class="rotary-led-group">
+                <div class="r-led-wrap" style="top:0; left:50%; transform:translateX(-50%)"><div class="r-led" id="led-all"></div><span class="r-lbl">ALL</span></div>
+                <div class="r-led-wrap" style="top:50%; right:-40px; transform:translateY(-50%)"><div class="r-led" id="led-g1"></div><span class="r-lbl">G1</span></div>
+                <div class="r-led-wrap" style="bottom:-40px; left:50%; transform:translateX(-50%)"><div class="r-led" id="led-g2"></div><span class="r-lbl">G2</span></div>
+                <div class="r-led-wrap" style="top:50%; left:-40px; transform:translateY(-50%)"><div class="r-led" id="led-g3"></div><span class="r-lbl">G3</span></div>
+              </div>
+              <div class="rotary-knob" id="rotaryKnob">
+                <div class="knob-indent"></div>
+                <div class="knob-line"></div>
+              </div>
+            </div>
+            
+            <div style="display:none;">
+              <button class="fpill active" id="btn-all" onclick="filterFeed(this,'all')">All</button>
+              <button class="fpill" id="btn-g1" onclick="filterFeed(this,'Gate 1')">G1</button>
+              <button class="fpill" id="btn-g2" onclick="filterFeed(this,'Gate 2')">G2</button>
+              <button class="fpill" id="btn-g3" onclick="filterFeed(this,'Gate 3')">G3</button>
+            </div>
           </div>
 
           <div class="feed-list" id="feedList">
@@ -372,6 +385,102 @@
   <div class="toast" id="toast"></div>
 
   <script src="dashboard.js"></script>
-</body>
+  <script>
+    // Rotary Logic
+    const rotaryKnob = document.getElementById('rotaryKnob');
+    const leds = {
+      'led-all': document.getElementById('btn-all'),
+      'led-g1': document.getElementById('btn-g1'),
+      'led-g2': document.getElementById('btn-g2'),
+      'led-g3': document.getElementById('btn-g3')
+    };
+    const states = Object.keys(leds);
+    const angles = [0, 90, 180, 270]; // Corresponding angles
+    
+    let currentAngle = 0;
+    let isDragging = false;
+    let startAngle = 0;
+    let startMouseAngle = 0;
 
+    function getMouseAngle(e, center) {
+      const x = e.clientX - center.x;
+      const y = e.clientY - center.y;
+      return Math.atan2(y, x) * (180 / Math.PI);
+    }
+
+    rotaryKnob.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      const rect = rotaryKnob.getBoundingClientRect();
+      const center = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+      startMouseAngle = getMouseAngle(e, center);
+      startAngle = currentAngle;
+      document.body.style.userSelect = 'none';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      const rect = rotaryKnob.getBoundingClientRect();
+      const center = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+      const currentMouseAngle = getMouseAngle(e, center);
+      let angleDiff = currentMouseAngle - startMouseAngle;
+      
+      let newAngle = startAngle + angleDiff;
+      rotaryKnob.style.transform = `rotate(${newAngle}deg)`;
+      currentAngle = newAngle;
+    });
+
+    document.addEventListener('mouseup', () => {
+      if (!isDragging) return;
+      isDragging = false;
+      document.body.style.userSelect = '';
+      
+      // Snap to nearest 90 degrees
+      let normalizedAngle = ((currentAngle % 360) + 360) % 360; // 0 to 360
+      let closestIdx = 0;
+      let minDiff = 360;
+      
+      angles.forEach((angle, idx) => {
+        let diff = Math.min(Math.abs(angle - normalizedAngle), 360 - Math.abs(angle - normalizedAngle));
+        if (diff < minDiff) {
+          minDiff = diff;
+          closestIdx = idx;
+        }
+      });
+      
+      // Apply snap
+      let targetAngle = angles[closestIdx];
+      // Adjust current angle to avoid spin back
+      currentAngle = currentAngle - normalizedAngle + targetAngle;
+      if (normalizedAngle > 270 && targetAngle === 0) {
+        currentAngle += 360;
+      } else if (normalizedAngle < 90 && targetAngle === 270) {
+        currentAngle -= 360;
+      }
+
+      rotaryKnob.style.transform = `rotate(${currentAngle}deg)`;
+      
+      // Haptic feedback
+      rotaryKnob.classList.remove('haptic-snap');
+      void rotaryKnob.offsetWidth; // trigger reflow
+      rotaryKnob.classList.add('haptic-snap');
+      
+      // Update LEDs and trigger buttons
+      states.forEach(state => {
+        document.getElementById(state).parentElement.classList.remove('active');
+        document.getElementById(state).classList.remove('active');
+      });
+      
+      const activeState = states[closestIdx];
+      document.getElementById(activeState).parentElement.classList.add('active');
+      document.getElementById(activeState).classList.add('active');
+      
+      // Click original hidden button
+      leds[activeState].click();
+    });
+    
+    // Initial active state
+    document.getElementById('led-all').classList.add('active');
+    document.getElementById('led-all').parentElement.classList.add('active');
+  </script>
+</body>
 </html>
