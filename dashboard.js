@@ -16,12 +16,9 @@ let allOrders = [];
 let activeFilter = "all";
 
 // ─── INIT ───────────────────────────────────
-window.onload = async () => {
-    await checkSession();
-
-    if (!currentUser) return; // 🔥 STOP if not logged in
-
-    await loadOrders();
+window.onload = async function () {
+    await checkSession();   // already you have
+    await loadOrders();     // already you have
     setupScrollSpy();
 };
 
@@ -238,7 +235,7 @@ function renderFeed() {
             ${o.location || o.gate || "—"} · ${o.platform || "—"} · ${statusLabel(o.status)}
         </div>
 
-        ${contactInfo} <!-- 🔥 INSERTED HERE -->
+        ${contactInfo} 
 
         <div class="fc-actions">
             ${actions}
@@ -526,3 +523,44 @@ function iconBg(status) {
     };
     return map[status] || "rgba(255,255,255,.05)";
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// new changes
+
+// async function loadStats() {
+//     try {
+//         const res = await fetch(`${API_ORDERS}/stats`, {
+//             headers: {
+//                 Authorization: "Bearer " + localStorage.getItem("token")
+//             }
+//         });
+
+//         if (!res.ok) throw new Error("Failed to fetch stats");
+
+//         const stats = await res.json();
+
+//         document.getElementById("statRequests").innerText = stats.totalRequests ?? 0;
+//         document.getElementById("statDelivered").innerText = stats.delivered ?? 0;
+//         document.getElementById("statPaid").innerText = "₹" + (stats.earnings ?? 0);
+//         document.getElementById("statActive").innerText = stats.active ?? 0;
+
+//     } catch (err) {
+//         console.error("STATS ERROR:", err);
+//     }
+// }
+
+// stats fetching logic
