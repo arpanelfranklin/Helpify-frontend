@@ -7,7 +7,7 @@
   <title>Helpify — Login</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link
-    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap"
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Plus+Jakarta+Sans:wght@700;800;900&display=swap"
     rel="stylesheet" />
   <link href="css/login.css" rel="stylesheet" type="text/css" />
 </head>
@@ -19,7 +19,6 @@
   <div class="orb orb3"></div>
   <div class="grid-bg"></div>
 
-  <a href="index.html" class="back-home">← Back to Home</a>
 
   <div class="page-wrap">
 
@@ -54,7 +53,7 @@
 
       <div class="features-list">
         <div class="feature-item">
-          <div class="fi-icon" style="background:rgba(108,99,255,.15)">🎓</div>
+          <div class="fi-icon" style="background:rgba(56, 178, 172,.15)">🎓</div>
           <div class="fi-text"><strong>College ID Verified</strong> — only Bennett students</div>
         </div>
         <div class="feature-item">
@@ -248,7 +247,7 @@
       if (/[0-9]/.test(val)) score++;
       if (/[^A-Za-z0-9]/.test(val)) score++;
       const widths = [0, 20, 40, 65, 85, 100];
-      const colors = ['', '#FF6584', '#FFB830', '#FFB830', '#43E97B', '#43E97B'];
+      const colors = ['', '#d4a052', '#d4a052', '#d4a052', '#43E97B', '#43E97B'];
       fill.style.width = widths[score] + '%';
       fill.style.background = colors[score];
     }
