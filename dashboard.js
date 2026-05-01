@@ -6,8 +6,8 @@ if (!localStorage.getItem("token")) {
     window.location.href = "login.html";
 }
 
-// const API_AUTH = "http://localhost:8080/api/auth";
-// const API_ORDERS = "http://localhost:8080/api/orders";
+// const API_AUTH = "http://localhost:8081/api/auth";
+// const API_ORDERS = "http://localhost:8081/api/orders";
 // setInterval(loadOrders, 5000);
 const API_AUTH = "https://helpify-backend-iv27.onrender.com/api/auth";
 const API_ORDERS = "https://helpify-backend-iv27.onrender.com/api/orders";
@@ -16,10 +16,14 @@ let allOrders = [];
 let activeFilter = "all";
 
 // ─── INIT ───────────────────────────────────
-window.onload = async function () {
-    await checkSession();   // already you have
-    await loadOrders();     // already you have
+window.onload = async () => {
+    await checkSession();
+
+    if (!currentUser) return; // 🔥 STOP if not logged in
+
+    await loadOrders();
     setupScrollSpy();
+    initTheme();
 };
 
 // ─── SESSION ────────────────────────────────
@@ -48,6 +52,7 @@ async function checkSession() {
         populateUser(currentUser);
 
     } catch {
+        localStorage.removeItem("token");
         redirect();
     }
 }
@@ -61,7 +66,7 @@ function populateUser(u) {
     const initial = name.charAt(0).toUpperCase();
 
     document.getElementById("sbAv").textContent = initial;
-    document.getElementById("sbName").textContent = name;
+    document.getElementById("sbName").innerHTML = getGenderDot(u.gender) + name;
     document.getElementById("sbEmail").textContent = email;
     document.getElementById("heroName").textContent = name + " 👋";
     document.getElementById("profileAv").textContent = initial;
@@ -167,7 +172,17 @@ function renderFeed() {
 
         // ================= ACTION BUTTONS =================
         if (o.status === "POSTED") {
-            actions = `<button class="fc-btn fc-btn-accept" onclick="acceptOrder('${o.id}')">Accept →</button>`;
+            let acceptBtnClass = "fc-btn fc-btn-accept";
+            let btnText = "Accept →";
+            let disabledAttr = "";
+            
+            if (o.preferredGender && o.preferredGender !== "Any" && o.preferredGender !== currentUser.gender) {
+                acceptBtnClass += " disabled";
+                disabledAttr = 'disabled="true" style="opacity: 0.5; cursor: not-allowed;"';
+                btnText = `Only ${o.preferredGender}s`;
+            }
+
+            actions = `<button class="${acceptBtnClass}" onclick="acceptOrder('${o.id}')" ${disabledAttr}>${btnText}</button>`;
         }
 
         else if (o.status === "ACCEPTED") {
@@ -182,7 +197,7 @@ function renderFeed() {
                 // 🔥 SHOW CREATOR DETAILS
                 contactInfo = `
                 <div class="fc-contact creator">
-                    <div>👤 ${o.postedByName || "User"}</div>
+                    <div>👤 ${getGenderDot(o.postedByGender)}${o.postedByName || "User"}</div>
                     <div>📞 ${o.postedByPhone || "N/A"}</div>
                     <a class="fc-call" href="tel:${o.postedByPhone}">Call</a>
                 </div>
@@ -192,12 +207,12 @@ function renderFeed() {
             // 👑 IF I CREATED
             else if (o.postedBy === currentUser.email) {
 
-                actions = `<span class="fc-accepted-by">✓ Accepted by ${o.acceptedByName || "someone"}</span>`;
+                actions = `<span class="fc-accepted-by">✓ Accepted by ${getGenderDot(o.acceptedByGender)}${o.acceptedByName || "someone"}</span>`;
 
                 // 🔥 SHOW DELIVERY GUY DETAILS
                 contactInfo = `
                 <div class="fc-contact deliverer">
-                    <div>🚀 ${o.acceptedByName || "Delivery Partner"}</div>
+                    <div>🚀 ${getGenderDot(o.acceptedByGender)}${o.acceptedByName || "Delivery Partner"}</div>
                     <div>📞 ${o.acceptedByPhone || "N/A"}</div>
                     <a class="fc-call" href="tel:${o.acceptedByPhone}">Call</a>
                 </div>
@@ -206,7 +221,7 @@ function renderFeed() {
 
             // 👀 OTHERS
             else {
-                actions = `<span class="fc-accepted-by">✓ Accepted by ${o.acceptedByName || "someone"}</span>`;
+                actions = `<span class="fc-accepted-by">✓ Accepted by ${getGenderDot(o.acceptedByGender)}${o.acceptedByName || "someone"}</span>`;
             }
         }
 
@@ -334,6 +349,7 @@ async function submitRequest() {
     const location = document.getElementById("orderRoom").value.trim();
     const platform = document.getElementById("orderPlatform").value;
     const gate = document.getElementById("orderGate").value;
+    const preferredGender = document.getElementById("orderGender").value;
     const selChip = document.querySelector(".r-chip.sel .chip-val");
     const amount = selChip ? parseInt(selChip.textContent.replace("₹", "")) : 20;
 
@@ -357,7 +373,8 @@ async function submitRequest() {
                 platform,
                 gate,
                 reward: amount,
-                status: "POSTED"
+                status: "POSTED",
+                preferredGender
             })
         });
         if (!res.ok) throw new Error();
@@ -524,43 +541,32 @@ function iconBg(status) {
     return map[status] || "rgba(255,255,255,.05)";
 }
 
+// ─── THEME TOGGLE ───────────────────────────
+function initTheme() {
+    const isLight = localStorage.getItem('theme') === 'light';
+    if (isLight) {
+        document.body.classList.add('light-mode');
+        document.getElementById('themeToggleBtn').textContent = '🌙';
+    }
+}
 
+function toggleTheme() {
+    const body = document.body;
+    const btn = document.getElementById('themeToggleBtn');
+    
+    if (body.classList.contains('light-mode')) {
+        body.classList.remove('light-mode');
+        localStorage.setItem('theme', 'dark');
+        btn.textContent = '☀️';
+    } else {
+        body.classList.add('light-mode');
+        localStorage.setItem('theme', 'light');
+        btn.textContent = '🌙';
+    }
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-// new changes
-
-// async function loadStats() {
-//     try {
-//         const res = await fetch(`${API_ORDERS}/stats`, {
-//             headers: {
-//                 Authorization: "Bearer " + localStorage.getItem("token")
-//             }
-//         });
-
-//         if (!res.ok) throw new Error("Failed to fetch stats");
-
-//         const stats = await res.json();
-
-//         document.getElementById("statRequests").innerText = stats.totalRequests ?? 0;
-//         document.getElementById("statDelivered").innerText = stats.delivered ?? 0;
-//         document.getElementById("statPaid").innerText = "₹" + (stats.earnings ?? 0);
-//         document.getElementById("statActive").innerText = stats.active ?? 0;
-
-//     } catch (err) {
-//         console.error("STATS ERROR:", err);
-//     }
-// }
-
-// stats fetching logic
+function getGenderDot(gender) {
+    if (gender === 'Female') return '<span style="color: #ff69b4; font-weight: bold;">•</span> ';
+    if (gender === 'Male') return '<span style="color: #3b82f6; font-weight: bold;">•</span> ';
+    return '';
+}
