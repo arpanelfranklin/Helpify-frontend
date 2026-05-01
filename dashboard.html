@@ -32,22 +32,22 @@
 
       <nav class="sb-nav">
         <div class="sb-section">Navigate</div>
-        <a class="sb-item active" onclick="scrollTo('s-overview')">
+        <a class="sb-item active" onclick="smoothTo('s-overview')">
           <span class="sb-item-icon">◈</span> Overview
         </a>
-        <a class="sb-item" onclick="scrollTo('s-create')">
+        <a class="sb-item" onclick="smoothTo('s-create')">
           <span class="sb-item-icon">＋</span> Post Request
         </a>
-        <a class="sb-item" onclick="scrollTo('s-feed')">
+        <a class="sb-item" onclick="smoothTo('s-feed')">
           <span class="sb-item-icon">◫</span> Request Feed
           <span class="sb-badge" id="feedCount">—</span>
         </a>
 
         <div class="sb-section">Account</div>
-        <a class="sb-item" onclick="scrollTo('s-history')">
+        <a class="sb-item" onclick="smoothTo('s-history')">
           <span class="sb-item-icon">⊡</span> My History
         </a>
-        <a class="sb-item" onclick="scrollTo('s-profile')">
+        <a class="sb-item" onclick="smoothTo('s-profile')">
           <span class="sb-item-icon">◎</span> Profile
         </a>
 
@@ -78,6 +78,7 @@
         </div>
         <div class="topbar-right">
           <div class="tb-chip"><span class="tb-chip-dot"></span> Live</div>
+          <div class="tb-btn" title="Toggle Theme" onclick="toggleTheme()" id="themeToggleBtn">☀️</div>
           <div class="tb-btn" onclick="document.getElementById('s-create').scrollIntoView({behavior:'smooth'})"
             title="New Request">＋</div>
           <div class="tb-btn" title="Refresh" onclick="loadOrders()">↻</div>
@@ -216,6 +217,14 @@
               <div class="field">
                 <label class="field-lbl">Hostel / Room</label>
                 <input class="f-input" type="text" placeholder="e.g. H3, Room 204" id="orderRoom" />
+              </div>
+              <div class="field">
+                <label class="field-lbl">Preferred Deliverer</label>
+                <select class="f-select" id="orderGender">
+                  <option value="Any">Any Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
               </div>
             </div>
 
