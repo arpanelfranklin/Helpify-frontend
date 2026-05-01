@@ -1,5 +1,5 @@
 // LOCAL (testing)
-// const API_BASE = "http://localhost:8080/api/auth";
+// const API_BASE = "http://localhost:8081/api/auth";
 
 // PRODUCTION
 const API_BASE = "https://helpify-backend-iv27.onrender.com/api/auth";
@@ -33,8 +33,9 @@ async function handleSignup(e) {
     const email = document.getElementById('signupEmail').value.trim().toLowerCase();
     const password = document.getElementById('signupPassword').value;
     const phone = document.getElementById('signupPhone').value.trim();
+    const gender = document.getElementById('signupGender').value;
 
-    if (!username || !email || !password) {
+    if (!username || !email || !password || !gender) {
         showMsg('Fill all fields', 'error');
         return;
     }
@@ -49,7 +50,8 @@ async function handleSignup(e) {
                 username,
                 email,
                 password,
-                phone
+                phone,
+                gender
             })
         });
 
