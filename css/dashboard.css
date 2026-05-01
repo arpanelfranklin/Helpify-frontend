@@ -1,4 +1,5 @@
   :root {
+    --topbar-bg: linear-gradient(90deg, #272d36, #313842, #272d36);
     --bg: #1e2229;
     --panel: #272d36;
     --bezel: #2a3039;
@@ -32,6 +33,35 @@
     --topbar-h: 64px;
     --r: 20px;
     --r-sm: 12px;
+  }
+
+  body.light-mode {
+    --bg: #d1d6d0;
+    --panel: #d1d6d0;
+    --bezel: #b8bcb7;
+    --topbar-bg: linear-gradient(90deg, #b8bcb7, #d1d6d0, #b8bcb7);
+    --lcd: #e2e8e1;
+    --teal: #2d8a84;
+    --teal-glow: rgba(45, 138, 132, 0.2);
+    --teal-glow-intense: rgba(45, 138, 132, 0.4);
+    --amber: #b07e3a;
+    --amber-glow: rgba(176, 126, 58, 0.2);
+    
+    --ink: #1e2229;
+    --ink2: #4a5563;
+    --ink3: #6b7a8d;
+    
+    --violet: #2d8a84;
+    --violet-glow: rgba(45, 138, 132, 0.15);
+    --lime: #b07e3a;
+    --lime-glow: rgba(176, 126, 58, 0.1);
+    --rose: #2d8a84;
+    --rose-glow: rgba(45, 138, 132, 0.1);
+    --amber-legacy: #b07e3a;
+    
+    --neo-shadow: 4px 4px 10px rgba(160, 165, 159, 0.5), -4px -4px 10px rgba(255, 255, 255, 0.7);
+    --neo-inset: inset 3px 3px 6px rgba(160, 165, 159, 0.4), inset -3px -3px 6px rgba(255, 255, 255, 0.6);
+    --neo-deep: inset 5px 5px 10px rgba(160, 165, 159, 0.5), inset -5px -5px 10px rgba(255, 255, 255, 0.7);
   }
 
  *,
@@ -289,8 +319,8 @@
    align-items: center;
    justify-content: space-between;
    padding: 0 28px;
-   background: linear-gradient(90deg, #272d36, #313842, #272d36);
-   box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    background: var(--topbar-bg);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
    flex-shrink: 0;
    position: sticky;
    top: 0;
