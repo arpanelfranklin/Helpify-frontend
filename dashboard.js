@@ -6,11 +6,11 @@ if (!localStorage.getItem("token")) {
     window.location.href = "login.html";
 }
 
-const API_AUTH = "http://localhost:8080/api/auth";
-const API_ORDERS = "http://localhost:8080/api/orders";
+// const API_AUTH = "http://localhost:8080/api/auth";
+// const API_ORDERS = "http://localhost:8080/api/orders";
 // setInterval(loadOrders, 5000);
-// const API_AUTH = "https://helpify-backend-iv27.onrender.com/api/auth";
-// const API_ORDERS = "https://helpify-backend-iv27.onrender.com/api/orders";
+const API_AUTH = "https://helpify-backend-iv27.onrender.com/api/auth";
+const API_ORDERS = "https://helpify-backend-iv27.onrender.com/api/orders";
 let currentUser = null;
 let allOrders = [];
 let activeFilter = "all";
