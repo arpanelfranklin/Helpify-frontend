@@ -1,8 +1,8 @@
 // LOCAL (testing)
-const API_BASE = "http://localhost:8080/api/auth";
+// const API_BASE = "http://localhost:8080/api/auth";
 
 // PRODUCTION
-// const API_BASE = "https://helpify-backend-iv27.onrender.com/api/auth";
+const API_BASE = "https://helpify-backend-iv27.onrender.com/api/auth";
 
 // ================= UI HELPERS =================
 function showMsg(text, type) {
