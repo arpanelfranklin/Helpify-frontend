@@ -1,8 +1,8 @@
 // LOCAL (testing)
-// const API_BASE = "http://localhost:8081/api/auth";
+const API_BASE = "http://localhost:8080/api/auth";
 
 // PRODUCTION
-const API_BASE = "https://helpify-backend-iv27.onrender.com/api/auth";
+// const API_BASE = "https://helpify-backend-iv27.onrender.com/api/auth";
 
 // ================= UI HELPERS =================
 function showMsg(text, type) {
@@ -151,32 +151,46 @@ async function handleLogin(e) {
     }
 }
 // SEND OTP
-async function sendForgotOtp() {
+async function sendOtp() {
     const email = document.getElementById("fpEmail").value;
+    const btn = event.target;
 
-    const res = await fetch(`${API_BASE}/forgot-password?email=${email}`, {
-        method: "POST"
-    });
+    if (!email) {
+        showMsg("Enter email first", "error");
+        return;
+    }
 
-    const text = await res.text();
+    btn.disabled = true;
 
-    if (!res.ok) {
-        showMsg(text, "error");
-    } else {
-        showMsg("OTP sent to email", "success");
+    try {
+        const res = await fetch(`${API_BASE}/forgot-password?email=${email}`, {
+            method: "POST"
+        });
+
+        const text = await res.text();
+
+        if (!res.ok) throw new Error(text);
+
+        showMsg("OTP sent to email 📩", "success");
+
+        document.getElementById("resetFields").style.display = "block";
+
+    } catch (err) {
+        showMsg(err.message, "error");
+        btn.disabled = false; // allow retry if failed
     }
 }
 // RESET PASSWORD
-async function handleForgot(e) {
+async function handleReset(e) {
     e.preventDefault();
 
     const email = document.getElementById("fpEmail").value;
     const otp = document.getElementById("fpOtp").value;
-    const newPassword = document.getElementById("fpPassword").value;
+    const password = document.getElementById("fpPassword").value;
 
     try {
         const res = await fetch(
-            `${API_BASE}/reset-password?email=${email}&otp=${otp}&newPassword=${newPassword}`,
+            `${API_BASE}/reset-password?email=${email}&otp=${otp}&newPassword=${password}`,
             { method: "POST" }
         );
 
@@ -186,9 +200,10 @@ async function handleForgot(e) {
 
         showMsg("Password reset successful ✅", "success");
 
+        // 👇 go back to login
         setTimeout(() => {
             switchTab('login', document.querySelector('[data-tab=login]'));
-        }, 1000);
+        }, 1200);
 
     } catch (err) {
         showMsg(err.message, "error");

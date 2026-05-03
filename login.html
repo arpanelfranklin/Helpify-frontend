@@ -209,24 +209,37 @@
                         </form>
                     </div>
                     <div class="auth-panel" id="panelForgot">
-                        <form class="auth-form" onsubmit="handleForgot(event)">
+                        <form class="auth-form" onsubmit="handleReset(event)">
 
+                            <!-- EMAIL -->
                             <div class="field-wrap">
-                                <label class="field-label">Email</label>
+                                <label>Email</label>
                                 <input class="field-input" type="email" id="fpEmail" required />
                             </div>
 
-                            <div class="field-wrap">
-                                <label class="field-label">OTP</label>
-                                <input class="field-input" type="text" id="fpOtp" required />
+                            <!-- SEND OTP BUTTON -->
+                            <button type="button" class="auth-submit" onclick="sendOtp()">
+                                Send OTP →
+                            </button>
+
+                            <!-- OTP + PASSWORD (hidden initially) -->
+                            <div id="resetFields" style="display:none; margin-top:15px;">
+
+                                <div class="field-wrap">
+                                    <label>OTP</label>
+                                    <input class="field-input" type="text" id="fpOtp" />
+                                </div>
+
+                                <div class="field-wrap">
+                                    <label>New Password</label>
+                                    <input class="field-input" type="password" id="fpPassword" />
+                                </div>
+
+                                <button type="submit" class="auth-submit">
+                                    Reset Password →
+                                </button>
                             </div>
 
-                            <div class="field-wrap">
-                                <label class="field-label">New Password</label>
-                                <input class="field-input" type="password" id="fpPassword" required />
-                            </div>
-
-                            <button type="submit" class="auth-submit">Reset Password →</button>
                         </form>
                     </div>
 

@@ -6,11 +6,11 @@ if (!localStorage.getItem("token")) {
     window.location.href = "login.html";
 }
 
-// const API_AUTH = "http://localhost:8081/api/auth";
-// const API_ORDERS = "http://localhost:8081/api/orders";
+const API_AUTH = "http://localhost:8080/api/auth";
+const API_ORDERS = "http://localhost:8080/api/orders";
 // setInterval(loadOrders, 5000);
-const API_AUTH = "https://helpify-backend-iv27.onrender.com/api/auth";
-const API_ORDERS = "https://helpify-backend-iv27.onrender.com/api/orders";
+// const API_AUTH = "https://helpify-backend-iv27.onrender.com/api/auth";
+// const API_ORDERS = "https://helpify-backend-iv27.onrender.com/api/orders";
 let currentUser = null;
 let allOrders = [];
 let activeFilter = "all";
@@ -175,7 +175,7 @@ function renderFeed() {
             let acceptBtnClass = "fc-btn fc-btn-accept";
             let btnText = "Accept →";
             let disabledAttr = "";
-            
+
             if (o.preferredGender && o.preferredGender !== "Any" && o.preferredGender !== currentUser.gender) {
                 acceptBtnClass += " disabled";
                 disabledAttr = 'disabled="true" style="opacity: 0.5; cursor: not-allowed;"';
@@ -553,7 +553,7 @@ function initTheme() {
 function toggleTheme() {
     const body = document.body;
     const btn = document.getElementById('themeToggleBtn');
-    
+
     if (body.classList.contains('light-mode')) {
         body.classList.remove('light-mode');
         localStorage.setItem('theme', 'dark');
