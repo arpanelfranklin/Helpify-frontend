@@ -150,6 +150,50 @@ async function handleLogin(e) {
         setLoading('loginBtn', false);
     }
 }
+// SEND OTP
+async function sendForgotOtp() {
+    const email = document.getElementById("fpEmail").value;
+
+    const res = await fetch(`${API_BASE}/forgot-password?email=${email}`, {
+        method: "POST"
+    });
+
+    const text = await res.text();
+
+    if (!res.ok) {
+        showMsg(text, "error");
+    } else {
+        showMsg("OTP sent to email", "success");
+    }
+}
+// RESET PASSWORD
+async function handleForgot(e) {
+    e.preventDefault();
+
+    const email = document.getElementById("fpEmail").value;
+    const otp = document.getElementById("fpOtp").value;
+    const newPassword = document.getElementById("fpPassword").value;
+
+    try {
+        const res = await fetch(
+            `${API_BASE}/reset-password?email=${email}&otp=${otp}&newPassword=${newPassword}`,
+            { method: "POST" }
+        );
+
+        const text = await res.text();
+
+        if (!res.ok) throw new Error(text);
+
+        showMsg("Password reset successful ✅", "success");
+
+        setTimeout(() => {
+            switchTab('login', document.querySelector('[data-tab=login]'));
+        }, 1000);
+
+    } catch (err) {
+        showMsg(err.message, "error");
+    }
+}
 
 // ================= AUTO REDIRECT (JWT) =================
 (function checkLogin() {
